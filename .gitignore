@@ -1,0 +1,29 @@
+# ── macOS-Systemmüll ──────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# ── Interne Projektdateien (gehören nicht auf die Website) ────
+TASKS.md
+tschichholz-inhalte.md
+dashboard.html
+
+# ── API-Keys & Secrets (NIEMALS einchecken!) ─────────────────
+# Sobald du den Google Maps Key in index.html einträgst,
+# ist er im HTML sichtbar – das ist bei Browser-APIs normal.
+# Lege aber KEINE separaten Key-Dateien an:
+.env
+.env.local
+*.env
+config.local.js
+config.secret.js
+secrets.json
+
+# ── Editor / IDE ──────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
