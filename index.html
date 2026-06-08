@@ -168,7 +168,6 @@
         <li><a href="#leistungen"     class="whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-fg transition-colors hover:bg-primary-50 hover:text-primary">Leistungen</a></li>
         <li><a href="#lieferanten"    class="whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-fg transition-colors hover:bg-primary-50 hover:text-primary">Lieferanten</a></li>
         <li><a href="#standort"       class="whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-fg transition-colors hover:bg-primary-50 hover:text-primary">Standort</a></li>
-        <li><a href="#stellenangebote" class="whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-fg transition-colors hover:bg-primary-50 hover:text-primary">Stellenangebote</a></li>
         <li><a href="#neuigkeiten"    class="whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-fg transition-colors hover:bg-primary-50 hover:text-primary">Neuigkeiten</a></li>
       </ul>
 
@@ -207,7 +206,6 @@
         <li><a href="#leistungen"      class="mobile-link block rounded-lg px-3 py-2.5 text-base font-medium text-fg hover:bg-primary-50 hover:text-primary">Leistungen</a></li>
         <li><a href="#lieferanten"     class="mobile-link block rounded-lg px-3 py-2.5 text-base font-medium text-fg hover:bg-primary-50 hover:text-primary">Lieferanten</a></li>
         <li><a href="#standort"        class="mobile-link block rounded-lg px-3 py-2.5 text-base font-medium text-fg hover:bg-primary-50 hover:text-primary">Standort</a></li>
-        <li><a href="#stellenangebote" class="mobile-link block rounded-lg px-3 py-2.5 text-base font-medium text-fg hover:bg-primary-50 hover:text-primary">Stellenangebote</a></li>
         <li><a href="#neuigkeiten"     class="mobile-link block rounded-lg px-3 py-2.5 text-base font-medium text-fg hover:bg-primary-50 hover:text-primary">Neuigkeiten</a></li>
         <li class="pt-2">
           <a href="tel:+493037591651" class="flex items-center justify-center gap-2 rounded-lg border border-primary-200 px-3 py-2.5 text-base font-semibold text-primary">
@@ -560,13 +558,6 @@
       </div>
     </section>
 
-    <section id="stellenangebote" class="scroll-mt-24 bg-primary-50">
-      <div class="mx-auto max-w-content px-4 py-20 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-primary sm:text-4xl">Stellenangebote</h2>
-        <p class="mt-3 text-muted">Abschnitt folgt – Stellenanzeige im nächsten Schritt.</p>
-      </div>
-    </section>
-
     <section id="neuigkeiten" class="scroll-mt-24 border-t border-brd bg-surface">
       <div class="mx-auto max-w-content px-4 py-20 sm:px-6 lg:px-8">
         <h2 class="text-3xl font-bold text-primary sm:text-4xl">Neuigkeiten</h2>
@@ -579,9 +570,14 @@
   <footer class="border-t border-brd bg-surface">
     <div class="mx-auto max-w-content px-4 py-8 text-sm text-muted sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-3">
       <span>© 1903–2026 Andrea Tschichholz · Heizung · Gas · Sanitär · Berlin-Charlottenburg</span>
-      <button type="button" id="impressum-open" class="underline underline-offset-2 transition-colors hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm">
-        Impressum &amp; Datenschutz
-      </button>
+      <div class="flex flex-wrap items-center gap-4">
+        <button type="button" id="stellen-open" class="underline underline-offset-2 transition-colors hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm">
+          Stellenangebote
+        </button>
+        <button type="button" id="impressum-open" class="underline underline-offset-2 transition-colors hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm">
+          Impressum &amp; Datenschutz
+        </button>
+      </div>
     </div>
   </footer>
 
@@ -847,6 +843,133 @@
       });
     })();
 
+    /* ---- Stellenangebote-Modal ---- */
+    (function () {
+
+      /* ============================================================
+         STELLENANGEBOTE HIER PFLEGEN
+         ============================================================
+         → Stelle eintragen: Objekt in das Array schreiben (Beispiel unten).
+         → Keine Stellen: Array leer lassen: []
+         ============================================================ */
+      var STELLEN = [
+        {
+          titel:        'Anlagenmechaniker/in – SHK',
+          beschreibung: 'Zur Verstärkung unseres Teams suchen wir eine/n Anlagenmechaniker/in für Sanitär-, Heizungs- und Klimatechnik für den Einsatz als Kundendienstmonteur/in.',
+          anforderungen: [
+            'Abgeschlossene Berufsausbildung im SHK-Bereich',
+            'Berufserfahrung wünschenswert – Berufseinsteiger herzlich willkommen',
+            'PKW-Führerschein möglichst vorhanden'
+          ],
+          bewerbungEmail: 'info@tschichholz-berlin.de'
+        }
+        /* Weitere Stellen hier einfügen:
+        ,{
+          titel:        'Zweite Stelle',
+          beschreibung: 'Beschreibung hier.',
+          anforderungen: ['Anforderung 1', 'Anforderung 2'],
+          bewerbungEmail: 'info@tschichholz-berlin.de'
+        }
+        */
+      ];
+
+      /* ---- Modal-Inhalt aufbauen -------------------------------- */
+      function baueInhalt() {
+        var container = document.getElementById('stellen-inhalt');
+        if (!container) return;
+
+        if (!STELLEN.length) {
+          /* Keine offenen Stellen */
+          container.innerHTML = [
+            '<div class="flex flex-col items-center gap-4 py-6 text-center">',
+            '  <div class="flex h-14 w-14 items-center justify-center rounded-full bg-primary-50 text-primary">',
+            '    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">',
+            '      <path stroke-linecap="round" stroke-linejoin="round" d="M15.182 16.318A4.486 4.486 0 0 0 12.016 15a4.486 4.486 0 0 0-3.198 1.318M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"/>',
+            '    </svg>',
+            '  </div>',
+            '  <div>',
+            '    <p class="text-base font-semibold text-fg">Aktuell haben wir keine Stellen zu besetzen.</p>',
+            '    <p class="mt-1 text-sm text-muted">Schauen Sie gerne zu einem späteren Zeitpunkt wieder vorbei.</p>',
+            '  </div>',
+            '</div>'
+          ].join('');
+          return;
+        }
+
+        /* Offene Stellen ausgeben */
+        var html = STELLEN.map(function (s) {
+          var anfHTML = s.anforderungen.map(function (a) {
+            return '<li class="flex items-start gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="mt-0.5 h-4 w-4 shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg><span>' + a + '</span></li>';
+          }).join('');
+
+          return [
+            '<div class="rounded-xl border border-brd bg-primary-50 p-5">',
+            '  <h3 class="text-base font-bold text-primary">' + s.titel + '</h3>',
+            '  <p class="mt-2 text-sm leading-relaxed text-fg">' + s.beschreibung + '</p>',
+            '  <ul class="mt-3 space-y-1.5 text-sm text-muted">' + anfHTML + '</ul>',
+            '</div>'
+          ].join('');
+        }).join('\n');
+
+        /* Bewerbungs-CTA (Email der ersten Stelle) */
+        var email = STELLEN[0].bewerbungEmail;
+        html += [
+          '<div class="mt-5 rounded-xl border border-primary-200 bg-surface p-5">',
+          '  <p class="text-sm font-semibold text-fg">Bewerbung einreichen</p>',
+          '  <p class="mt-1 text-sm text-muted">Schicken Sie Ihre vollständigen Bewerbungsunterlagen (Anschreiben, Lebenslauf, Zeugnisse) bitte per E-Mail an:</p>',
+          '  <a href="mailto:' + email + '" class="mt-3 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">',
+          '    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/></svg>',
+          '    ' + email,
+          '  </a>',
+          '</div>'
+        ].join('');
+
+        container.innerHTML = html;
+      }
+
+      /* ---- Modal-Logik ------------------------------------------ */
+      document.addEventListener('DOMContentLoaded', function () {
+        var modal   = document.getElementById('stellen-modal');
+        if (!modal) return;
+        var dialog  = modal.querySelector('[role="dialog"]');
+        var opener  = document.getElementById('stellen-open');
+        var closers = modal.querySelectorAll('[data-close-stellen]');
+        var lastFocused = null;
+
+        baueInhalt();
+
+        function open() {
+          lastFocused = document.activeElement;
+          modal.classList.remove('hidden');
+          modal.setAttribute('aria-hidden', 'false');
+          document.body.style.overflow = 'hidden';
+          var closeBtn = modal.querySelector('[data-close-stellen]');
+          if (closeBtn) setTimeout(function () { closeBtn.focus(); }, 30);
+          document.addEventListener('keydown', onKey);
+        }
+        function close() {
+          modal.classList.add('hidden');
+          modal.setAttribute('aria-hidden', 'true');
+          document.body.style.overflow = '';
+          document.removeEventListener('keydown', onKey);
+          if (lastFocused && lastFocused.focus) lastFocused.focus();
+        }
+        function onKey(e) {
+          if (e.key === 'Escape') { close(); return; }
+          if (e.key === 'Tab') {
+            var f = dialog.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+            if (!f.length) return;
+            var first = f[0], last = f[f.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+          }
+        }
+
+        if (opener) opener.addEventListener('click', open);
+        closers.forEach(function (b) { b.addEventListener('click', close); });
+      });
+    })();
+
     /* ---- Impressum-Modal ---- */
     /* DOMContentLoaded nötig, da das Modal-HTML nach diesem Script-Block steht */
     document.addEventListener('DOMContentLoaded', function () {
@@ -1047,6 +1170,39 @@
   <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=DEIN_GOOGLE_MAPS_API_KEY&callback=initKarte&loading=async">
   </script>
+
+  <!-- ============================================================
+       STELLENANGEBOTE-MODAL
+       ============================================================ -->
+  <div id="stellen-modal" class="fixed inset-0 z-[110] hidden" aria-hidden="true">
+    <!-- Scrim -->
+    <div class="absolute inset-0 bg-fg/50 backdrop-blur-sm" data-close-stellen></div>
+    <!-- Dialog -->
+    <div role="dialog" aria-modal="true" aria-labelledby="stellen-title"
+         class="absolute inset-x-4 top-[5%] mx-auto max-w-lg overflow-hidden rounded-2xl bg-surface shadow-2xl sm:inset-x-auto sm:left-1/2 sm:w-full sm:-translate-x-1/2">
+      <!-- Header -->
+      <div class="flex items-start justify-between border-b border-brd px-6 py-5">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"/>
+            </svg>
+          </div>
+          <h2 id="stellen-title" class="text-xl font-bold text-primary">Stellenangebote</h2>
+        </div>
+        <button type="button" data-close-stellen aria-label="Schließen"
+                class="rounded-lg p-1.5 text-muted transition-colors hover:bg-primary-50 hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <!-- Inhalt -->
+      <div class="max-h-[70vh] overflow-y-auto px-6 py-6" id="stellen-inhalt">
+        <!-- Wird via JS befüllt (siehe unten) -->
+      </div>
+    </div>
+  </div>
 
   <!-- ============================================================
        IMPRESSUM-MODAL
