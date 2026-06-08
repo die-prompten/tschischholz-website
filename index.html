@@ -41,7 +41,6 @@
       --color-border:    #dfeaec;
 
       /* Hero-Bild (Platzhalter) – hier später echtes Foto eintragen */
-      --hero-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'%3E%3C/svg%3E");
     }
   </style>
 
@@ -80,15 +79,29 @@
       body { @apply bg-bg text-fg font-sans antialiased; }
       h1, h2, h3 { @apply font-display; }
     }
-    /* Hero-Hintergrund: Pastell-Verlauf als Platzhalter, überlagert vom späteren Foto.
-       Sobald ein echtes Bild da ist: --hero-image auf url('assets/hero.jpg') setzen. */
+    /* Hero-Hintergrund: historisches Foto Karl Tschichholz */
     .hero-bg {
-      background-image:
-        linear-gradient(180deg, rgba(47,111,126,0.10) 0%, rgba(47,111,126,0.55) 100%),
-        var(--hero-image),
-        linear-gradient(135deg, #e3f1f3 0%, #bfe0e6 45%, #cfe6dd 100%);
-      background-size: cover, cover, cover;
-      background-position: center;
+      background-color: #2b1f15; /* Sepia-Fallback während Bild lädt */
+    }
+    .hero-bg img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+    /* Overlay: dunkelt das Sepia-Bild ab → Text bleibt lesbar (WCAG AA) */
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        160deg,
+        rgba(20, 14, 8, 0.62) 0%,
+        rgba(30, 20, 10, 0.45) 55%,
+        rgba(47, 111, 126, 0.50) 100%
+      );
     }
     /* ---- Logo-Laufband (Marquee / Endlosschleife) ---- */
     .marquee {
@@ -222,12 +235,21 @@
          HERO / START
          ============================================================ -->
     <section id="hero" class="relative isolate overflow-hidden">
-      <!-- Hintergrundbild-Platzhalter (Pastell-Verlauf, später echtes Foto via --hero-image) -->
-      <div class="hero-bg absolute inset-0 -z-10" aria-hidden="true"></div>
-
-      <!-- Platzhalter-Hinweis (im Live-Betrieb entfernen) -->
-      <div class="absolute right-3 top-3 z-10 rounded-full bg-black/30 px-3 py-1 text-[11px] font-medium text-white/90 backdrop-blur-sm">
-        Platzhalter · Hero-Bild Heizung / Handwerk
+      <!-- Hero-Hintergrund: historisches Foto Karl Tschichholz (um 1903) -->
+      <div class="hero-bg absolute inset-0 -z-10" aria-hidden="true">
+        <picture>
+          <!-- WebP: modern, ~40% kleiner -->
+          <source srcset="assets/hero.webp" type="image/webp">
+          <!-- JPEG-Fallback für ältere Browser -->
+          <img
+            src="assets/hero.jpg"
+            alt=""
+            width="916"
+            height="688"
+            fetchpriority="high"
+            decoding="sync"
+          >
+        </picture>
       </div>
 
       <div class="mx-auto flex max-w-content flex-col items-start px-4 py-20 sm:px-6 sm:py-28 lg:px-8 lg:py-36">
