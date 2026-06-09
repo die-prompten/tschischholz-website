@@ -126,6 +126,104 @@
     }
 
     /* ════════════════════════════════════════════════════════════
+       BLUR-EFFEKTE — dezent, seriös, performant
+       Alle Blur-Werte sind konservativ (≤ 14px) für gute GPU-Performance.
+       ════════════════════════════════════════════════════════════ */
+
+    /* ── 1. HEADER — Milchglas (Glassmorphism) ─────────────────
+       Browser ohne backdrop-filter-Support bekommen soliden Fallback */
+    @supports not (backdrop-filter: blur(1px)) {
+      #site-header {
+        /* Fallback: halbtransparente, undurchsichtigere Fläche */
+        background-color: rgba(var(--surface-rgb, 248 252 252) / 0.97) !important;
+        border-bottom-color: rgba(0,0,0,.10);
+      }
+    }
+    @supports (backdrop-filter: blur(1px)) {
+      #site-header {
+        background-color: rgba(248, 252, 252, 0.78);
+        -webkit-backdrop-filter: blur(14px) saturate(1.4);
+                backdrop-filter: blur(14px) saturate(1.4);
+        border-bottom: 1px solid rgba(255,255,255,0.55);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease,
+                    backdrop-filter 0.3s ease;
+      }
+    }
+
+    /* ── 2. HERO — Hintergrundbild leicht weichzeichnen ────────
+       Gibt Text + CTA mehr Luft; kombiniert mit dem dunklen Overlay */
+    .hero-bg img {
+      filter: blur(1.8px) brightness(0.95);
+      transform: scale(1.02); /* verhindert weiße Kanten durch blur */
+    }
+
+    /* ── 3. BLUR-UP — Bilder starten unscharf, werden beim
+       Laden scharf (sanfter Übergang via JS-Klasse .img-loaded) ─ */
+    img.blur-up {
+      filter: blur(8px);
+      transform: scale(1.01);
+      transition: filter 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: filter;
+    }
+    img.blur-up.img-loaded {
+      filter: blur(0);
+      transform: scale(1);
+    }
+
+    /* ── 4. MODAL-BACKDROP — stärkere Unschärfe des Hintergrunds ─
+       Ersetzt backdrop-blur-sm (4px) durch kräftigeres 10px        */
+    @supports (backdrop-filter: blur(1px)) {
+      [data-close-modal],
+      [data-close-stellen],
+      [data-close-impressum] {
+        -webkit-backdrop-filter: blur(10px) brightness(0.88);
+                backdrop-filter: blur(10px) brightness(0.88);
+        background-color: rgba(15, 25, 30, 0.45) !important;
+      }
+    }
+
+    /* ── 5. HOVER-DEFOKUS — Leistungskarten & Lieferanten-Logos ─
+       Das fokussierte Element bleibt scharf, Nachbarn werden dezent
+       unscharf. Nur auf Nicht-Touch-Geräten (hover: hover).        */
+    @media (hover: hover) {
+      /* Leistungskarten: beim Hover einer Karte die anderen leicht trüben */
+      .carousel-viewport:hover .carousel-card {
+        filter: blur(1.5px) brightness(0.94);
+        transition: filter 0.25s ease, brightness 0.25s ease;
+      }
+      .carousel-viewport:hover .carousel-card:hover {
+        filter: none;
+        transition: filter 0.15s ease;
+      }
+
+      /* Lieferanten-Logos: Gleiche Logik im Laufband */
+      .marquee__track:hover > a {
+        filter: blur(1.2px) opacity(0.75);
+        transition: filter 0.2s ease, opacity 0.2s ease;
+      }
+      .marquee__track:hover > a:hover {
+        filter: none;
+        opacity: 1;
+        transition: filter 0.1s ease, opacity 0.1s ease;
+      }
+    }
+
+    /* ── Barrierefreiheit: prefers-reduced-motion & transparency ─ */
+    @media (prefers-reduced-motion: reduce), (prefers-reduced-transparency: reduce) {
+      .hero-bg img   { filter: brightness(0.95) !important; transform: none !important; }
+      img.blur-up    { filter: none !important; transform: none !important; transition: none !important; }
+      img.blur-up.img-loaded { filter: none !important; }
+      [data-close-modal], [data-close-stellen], [data-close-impressum] {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        background-color: rgba(15, 25, 30, 0.60) !important;
+      }
+      .carousel-viewport:hover .carousel-card,
+      .marquee__track:hover > a { filter: none !important; opacity: 1 !important; }
+    }
+
+    /* ════════════════════════════════════════════════════════════
        HOVER-EFFEKTE – einheitlicher Lift für alle Buttons
        ════════════════════════════════════════════════════════════ */
 
@@ -939,6 +1037,39 @@
         status.classList.remove('hidden');
       });
     })();
+
+    /* ---- Blur-Up: Bilder scharf schalten wenn geladen ---- */
+    (function () {
+      /* Kein Effekt bei prefers-reduced-motion oder -transparency */
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (window.matchMedia('(prefers-reduced-transparency: reduce)').matches) return;
+
+      /* Alle lazy-geladenen Bilder außer dem Hero-Bild */
+      var bilder = Array.from(
+        document.querySelectorAll('img[loading="lazy"]')
+      );
+
+      bilder.forEach(function (img) {
+        img.classList.add('blur-up');
+
+        function scharf() {
+          img.classList.add('img-loaded');
+          img.removeEventListener('load',  scharf);
+          img.removeEventListener('error', scharf);
+        }
+
+        if (img.complete && img.naturalWidth > 0) {
+          /* Bild ist bereits gecacht → sofort scharf (mit mini-Delay
+             damit die CSS-Klasse zuerst greift) */
+          requestAnimationFrame(function () {
+            img.classList.add('img-loaded');
+          });
+        } else {
+          img.addEventListener('load',  scharf, { once: true });
+          img.addEventListener('error', scharf, { once: true });
+        }
+      });
+    }());
 
     /* ---- Stellenangebote-Modal ---- */
     (function () {
