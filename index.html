@@ -81,6 +81,26 @@
     }
     /* Hero-Hintergrund: historisches Foto Karl Tschichholz */
     /* ════════════════════════════════════════════════════════════
+       HERO — Zentrierung & Layout
+       ════════════════════════════════════════════════════════════ */
+    #hero {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 64px);   /* Fallback */
+      min-height: calc(100svh - 64px);  /* Modern: berücksichtigt mobile Browser-Bars */
+      width: 100%;
+      text-align: center;
+    }
+    #hero > div {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;  /* Kinder horizontal zentrieren */
+      justify-content: center;
+    }
+
+    /* ════════════════════════════════════════════════════════════
        HERO — Einblend-Animationen (gestaffelt, ease-out)
        ════════════════════════════════════════════════════════════ */
     @keyframes hero-fade-up {
@@ -387,7 +407,7 @@
          HERO / START — weißer Hintergrund, saubere Typografie
          ============================================================ -->
     <section id=”hero” class=”bg-surface”>
-      <div class=”mx-auto flex min-h-[calc(100svh-64px)] max-w-2xl flex-col items-center justify-center px-4 py-24 text-center sm:px-6 sm:py-32 lg:px-8”>
+      <div class=”mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8”>
 
         <!-- Slogan — dezent, klein, italic, ganz oben -->
         <p class=”ha ha-1 max-w-lg text-sm font-medium italic leading-relaxed text-muted sm:text-base”>
