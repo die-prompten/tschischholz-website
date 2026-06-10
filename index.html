@@ -10,37 +10,35 @@
   <!-- Tailwind CSS (Play CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Google Fonts: Fraunces (Display/Serif) + Inter (Sans) -->
+  <!-- Google Fonts: Poppins -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&display=swap" rel="stylesheet" />
 
   <style>
     /* ============================================================
-       DESIGN TOKENS – Pastell-Palette (Petrol + warmer Akzent)
+       DESIGN TOKENS – Slate Blue Palette
        Zentral hier anpassbar.
        ============================================================ */
     :root {
-      /* Hauptfarbe: Petrol / Pastellblau */
-      --color-primary:      #2f6f7e;  /* Petrol – Text/Buttons, Kontrast auf Weiß */
-      --color-primary-600:  #3b8294;  /* Hover/heller */
-      --color-primary-200:  #bfe0e6;  /* Pastellblau */
-      --color-primary-100:  #e3f1f3;  /* sehr helle Fläche */
-      --color-primary-50:   #f1f8f9;  /* Section-Hintergrund */
+      /* Hauptfarbe: Slate Blue */
+      --color-primary:      #4A637D;  /* Slate Blue – Hauptfarbe, 5.85:1 auf Weiß ✓ */
+      --color-primary-600:  #6A8EA8;  /* Heller Slate – Hover/Akzent */
+      --color-primary-200:  #B4CCD9;  /* Pastellblau */
+      --color-primary-100:  #D9E8F0;  /* sehr helle Fläche */
+      --color-primary-50:   #EFE7DC;  /* Warmer Beige – Section-Hintergrund */
 
-      /* Warmer Akzent (CTA) */
-      --color-accent:       #d98c6a;  /* weiche Terrakotta – dekorativ */
-      --color-accent-cta:   #bc5e40;  /* kräftiger, weißer Text lesbar */
-      --color-accent-hover: #a8512f;  /* CTA Hover */
+      /* CTA – Slate Blue (Kontrast weiß auf #4A637D = 5.85:1 ✓) */
+      --color-accent:       #6A8EA8;  /* Heller Slate – dekorativ */
+      --color-accent-cta:   #4A637D;  /* Slate Blue – CTA Button */
+      --color-accent-hover: #3A5169;  /* Dunklerer Hover */
 
-      /* Neutrale Töne */
-      --color-bg:        #fbfdfd;
+      /* Neutrale Töne (warm abgestimmt auf #EFE7DC) */
+      --color-bg:        #FAF8F5;  /* Sehr helles Warmweiß */
       --color-surface:   #ffffff;
-      --color-fg:        #1d2b30;  /* Slate – Fließtext */
-      --color-muted:     #56666b;  /* gedämpfter Text */
-      --color-border:    #dfeaec;
-
-      /* Hero-Bild (Platzhalter) – hier später echtes Foto eintragen */
+      --color-fg:        #1E2D3A;  /* Dunkles Slate – Fließtext (hoher Kontrast) */
+      --color-muted:     #5A7080;  /* Gedämpfter Text – 4.74:1 auf Weiß ✓ */
+      --color-border:    #D0D9E0;  /* Slate-Randfarbe */
     }
   </style>
 
@@ -65,8 +63,8 @@
             brd:       'var(--color-border)',
           },
           fontFamily: {
-            display: ['Fraunces', 'Georgia', 'serif'],
-            sans:    ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Poppins', 'system-ui', 'sans-serif'],
+            sans:    ['Poppins', 'system-ui', 'sans-serif'],
           },
           maxWidth: { content: '80rem' },
         },
@@ -79,7 +77,17 @@
       body { @apply bg-bg text-fg font-sans antialiased; }
       h1, h2, h3 { @apply font-display; }
     }
-    /* Hero-Hintergrund: historisches Foto Karl Tschichholz */
+    /* ════════════════════════════════════════════════════════════
+       HERO SNAP — Sticky-Scroll nur für Hero → Über uns
+       proximity = sanftes Einrasten; rest der Seite scrollt frei
+       ════════════════════════════════════════════════════════════ */
+    html {
+      scroll-snap-type: y proximity;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-snap-type: none !important; }
+    }
+
     /* ════════════════════════════════════════════════════════════
        HERO — Zentrierung & Layout
        ════════════════════════════════════════════════════════════ */
@@ -91,6 +99,13 @@
       min-height: calc(100svh - 64px);  /* Modern: berücksichtigt mobile Browser-Bars */
       width: 100%;
       text-align: center;
+      /* Snap: Seite rastet hier ein – scroll-snap-stop: always hält den Nutzer */
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+    /* Erste Sektion nach Hero = Ziel-Snap-Point */
+    #ueber-uns {
+      scroll-snap-align: start;
     }
     #hero > div {
       width: 100%;
