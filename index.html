@@ -81,13 +81,6 @@
        HERO SNAP — Sticky-Scroll nur für Hero → Über uns
        proximity = sanftes Einrasten; rest der Seite scrollt frei
        ════════════════════════════════════════════════════════════ */
-    html {
-      scroll-snap-type: y proximity;
-    }
-    @media (prefers-reduced-motion: reduce) {
-      html { scroll-snap-type: none !important; }
-    }
-
     /* ════════════════════════════════════════════════════════════
        HERO — Zentrierung & Layout
        ════════════════════════════════════════════════════════════ */
@@ -99,13 +92,6 @@
       min-height: calc(100svh - 64px);  /* Modern: berücksichtigt mobile Browser-Bars */
       width: 100%;
       text-align: center;
-      /* Snap: Seite rastet hier ein – scroll-snap-stop: always hält den Nutzer */
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
-    }
-    /* Erste Sektion nach Hero = Ziel-Snap-Point */
-    #ueber-uns {
-      scroll-snap-align: start;
     }
     #hero > div {
       width: 100%;
@@ -1586,6 +1572,54 @@
       </div><!-- /dialog -->
     </div>
   </div><!-- /impressum-modal -->
+
+  <!-- ============================================================
+       HERO SNAP — Sticky-Scroll: beim Runterscrollen vom Hero
+       Nur für Hero → Über uns; Rest der Seite scrollt frei.
+       ============================================================ -->
+  <script>
+    (function heroSnapEffect() {
+      var hero = document.getElementById('hero');
+      var next = document.getElementById('ueber-uns');
+      if (!hero || !next) return;
+
+      // Reduced-Motion: kein Snap-Effekt
+      var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reducedMotion) return;
+
+      var locked = false;
+
+      function snapToNext() {
+        locked = true;
+        next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(function() { locked = false; }, 900);
+      }
+
+      // ── Desktop: Mausrad ──────────────────────────────────────
+      window.addEventListener('wheel', function(e) {
+        if (locked) { e.preventDefault(); return; }
+        // Nur aktiv wenn im Hero-Bereich und nach unten gescrollt wird
+        if (window.scrollY <= hero.offsetHeight * 0.85 && e.deltaY > 15) {
+          e.preventDefault();
+          snapToNext();
+        }
+      }, { passive: false });
+
+      // ── Mobile: Touch-Swipe ───────────────────────────────────
+      var touchStartY = 0;
+      window.addEventListener('touchstart', function(e) {
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      window.addEventListener('touchend', function(e) {
+        if (locked) return;
+        var swipe = touchStartY - e.changedTouches[0].clientY;
+        if (window.scrollY <= hero.offsetHeight * 0.85 && swipe > 40) {
+          snapToNext();
+        }
+      }, { passive: true });
+    })();
+  </script>
 
 </body>
 </html>
