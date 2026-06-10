@@ -74,7 +74,8 @@
 
   <style type="text/tailwindcss">
     @layer base {
-      body { @apply bg-bg text-fg font-sans antialiased; }
+      html { overflow-x: hidden; }
+      body { @apply bg-bg text-fg font-sans antialiased; overflow-x: hidden; }
       h1, h2, h3 { @apply font-display; }
     }
     /* ════════════════════════════════════════════════════════════
@@ -88,8 +89,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: calc(100vh - 64px);   /* Fallback */
-      min-height: calc(100svh - 64px);  /* Modern: berücksichtigt mobile Browser-Bars */
+      min-height: calc(100vh - var(--header-h, 64px));
+      min-height: calc(100svh - var(--header-h, 64px));
       width: 100%;
       text-align: center;
     }
@@ -1580,6 +1581,19 @@
       </div><!-- /dialog -->
     </div>
   </div><!-- /impressum-modal -->
+
+  <!-- Misst Header-Höhe und setzt CSS-Variable für exakte Hero-Vollbild-Berechnung -->
+  <script>
+    (function setHeroHeight() {
+      var header = document.getElementById('site-header');
+      if (!header) return;
+      function update() {
+        document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+      }
+      update();
+      window.addEventListener('resize', update);
+    })();
+  </script>
 
   <!-- ============================================================
        HERO SNAP — Sticky-Scroll: beim Runterscrollen vom Hero
